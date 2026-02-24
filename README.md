@@ -1,198 +1,87 @@
-# Project: Online Educational Resources Platform
+# Online Educational Resources Platform
 
-Build a full-stack web application using:
+A full-stack web application for sharing and managing educational PDF resources, built with Next.js, PostgreSQL, Drizzle ORM, ShadCN UI, and NextAuth.
 
-- Next.js (App Router)
-- PostgreSQL
-- Drizzle ORM
-- ShadCN UI
-- Tailwind CSS
-- NextAuth (Credentials Provider)
-- bcrypt for password hashing
-- Local file storage in /public/uploads
+## Tech Stack
 
-The project must be minimal, clean, and properly structured.
+- **Framework**: Next.js 15+ (App Router)
+- **Database**: PostgreSQL
+- **ORM**: Drizzle ORM
+- **Authentication**: NextAuth.js (Credentials Provider)
+- **UI Components**: ShadCN UI & Tailwind CSS
+- **File Storage**: Local filesystem (`/public/uploads`)
 
-Do NOT overengineer.
+## Prerequisites
 
----
+- [Bun](https://bun.sh/) installed
+- PostgreSQL database
 
-## Core Features
+## Getting Started
 
-1. User Registration and Login
-2. Upload PDF resources (max 5MB)
-3. View and download approved resources
-4. Subject-based filtering
-5. Admin approval system
+### 1. Clone properties and Install Dependencies
 
-Only allow PDF uploads.
-Validate file type and file size on server side.
+```bash
+bun install
+```
 
----
+### 2. Set Environment Variables
 
-## Database Design (Drizzle Schema)
+Create a `.env` file in the root directory and add the following:
 
-Use PostgreSQL with Drizzle ORM.
+```env
+DATABASE_URL=postgres://username:password@localhost:5432/database_name
+AUTH_SECRET=your_nextauth_secret_here # Generate one: openssl rand -base64 32
+```
 
-Create the following tables:
+### 3. Database Setup
 
-### users
-- id (uuid, primary key, default random)
-- name (varchar)
-- email (varchar, unique)
-- password (text, hashed)
-- role (enum: "USER", "ADMIN")
-- created_at (timestamp, default now)
+Push the schema to your database:
 
-### resources
-- id (uuid, primary key, default random)
-- title (varchar)
-- description (text)
-- subject (varchar)
-- file_url (text)
-- status (enum: "PENDING", "APPROVED")
-- uploaded_by (uuid, foreign key -> users.id, cascade delete)
-- created_at (timestamp, default now)
+```bash
+bunx drizzle-kit push
+```
 
-Use proper relations in Drizzle.
+### 4. Seed Admin User
 
----
+Run the seed script to create an initial admin account:
 
-## Required Folder Structure
+```bash
+bun scripts/seed.ts
+```
 
-app/
-  page.tsx
-  login/page.tsx
-  register/page.tsx
-  dashboard/page.tsx
-  upload/page.tsx
-  resources/page.tsx
-  admin/page.tsx
+**Admin Credentials:**
+- **Email**: `admin@example.com`
+- **Password**: `password123`
 
-app/api/
-  auth/[...nextauth]/route.ts
-  upload/route.ts
-  resources/route.ts
-  admin/approve/route.ts
+### 5. Create Upload Directory
 
-lib/
-  db.ts
-  schema.ts
-  auth.ts
+Ensure the upload directory exists:
 
-components/
-  Navbar.tsx
-  ResourceCard.tsx
-  UploadForm.tsx
+```bash
+mkdir -p public/uploads
+```
 
-middleware.ts
+### 6. Run the Application
 
-public/uploads/
+```bash
+bun dev
+```
 
----
+Visit [http://localhost:3000](http://localhost:3000) to see the app.
 
-## Authentication
+## Features
 
-Use NextAuth Credentials Provider.
+- **User Auth**: Register and Login functionality.
+- **Resource Upload**: Authenticated users can upload PDF files (max 5MB).
+- **Approval System**: Admin must approve resources before they appear in the public gallery.
+- **Dashboard**: Users can track their own uploads and their status.
+- **Admin Panel**: Dedicated route for admins to approve/reject pending resources.
+- **Filtering**: Browse resources by subject and search by title/description.
 
-- Hash passwords using bcrypt.
-- Store session in JWT.
-- Protect:
-  - /dashboard
-  - /upload
-  - /admin
+## Folder Structure
 
-Only ADMIN role can access /admin.
-
-Create a seed function to insert one ADMIN user.
-
----
-
-## API Requirements
-
-Upload Route:
-- Validate authentication
-- Validate file type (application/pdf)
-- Validate max 5MB
-- Save file to /public/uploads
-- Insert metadata in database with status = "PENDING"
-
-Resources Route:
-- Return only APPROVED resources for normal users
-- Admin can fetch all resources
-
-Admin Approve Route:
-- Only ADMIN allowed
-- Update status to APPROVED
-
----
-
-## UI Requirements (Use ShadCN Components)
-
-Use:
-- Card
-- Button
-- Input
-- Label
-- Textarea
-- Select
-- Badge
-- Table
-
-Keep UI minimal and clean.
-
-Pages:
-
-Home:
-- Title
-- Description
-- Login/Register buttons
-- View Resources button
-
-Dashboard:
-- Welcome message
-- List of user uploads
-
-Upload:
-- Form with Title, Description, Subject, File upload
-
-Resources:
-- Search input
-- Subject filter
-- ResourceCard grid
-
-Admin:
-- Table of pending uploads
-- Approve button
-
----
-
-## Technical Requirements
-
-- Use Drizzle with PostgreSQL driver
-- Use environment variables for DATABASE_URL
-- Use server components where possible
-- Use route handlers for API
-- Use middleware for route protection
-- Avoid unnecessary third-party libraries
-
----
-
-## Deliverables
-
-Generate:
-
-1. Drizzle schema
-2. Database connection setup
-3. Auth configuration
-4. Middleware
-5. All route handlers
-6. Basic ShadCN UI usage
-7. Seed script for ADMIN
-8. README with setup instructions
-
-Keep code modular and clean.
-No extra features.
-No AI features.
-No cloud storage.
-Minimal but complete.
+- `app/`: Next.js pages and API routes.
+- `components/`: UI components (including ShadCN).
+- `lib/`: Database schema, connection, and auth configuration.
+- `scripts/`: Seeding and maintenance scripts.
+- `public/uploads/`: Local storage for uploaded PDF files.
