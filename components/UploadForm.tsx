@@ -9,13 +9,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
+import { toast } from "sonner";
+
 const SUBJECTS = ["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "History", "Literature", "Other"];
 
 export default function UploadForm() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
-    // Simplified toast since I haven't added the hook yet, but I'll use a simple alert if toast is not available
-    // Or I can add the toast component.
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -25,7 +25,7 @@ export default function UploadForm() {
         const file = formData.get("file") as File;
 
         if (file && file.size > 5 * 1024 * 1024) {
-            alert("File size exceeds 5MB limit");
+            toast.error("File size exceeds 5MB limit");
             setLoading(false);
             return;
         }
@@ -37,14 +37,16 @@ export default function UploadForm() {
             });
 
             if (res.ok) {
-                alert("Upload successful! Pending admin approval.");
+                toast.success("Upload successful!", {
+                    description: "Pending admin approval.",
+                });
                 router.push("/dashboard");
             } else {
                 const data = await res.json();
-                alert(data.error || "Upload failed");
+                toast.error(data.error || "Upload failed");
             }
         } catch (error) {
-            alert("An error occurred during upload");
+            toast.error("An error occurred during upload");
         } finally {
             setLoading(false);
         }

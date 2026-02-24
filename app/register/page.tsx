@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
+import { toast } from "sonner";
+
 export default function RegisterPage() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -29,14 +31,16 @@ export default function RegisterPage() {
             });
 
             if (res.ok) {
-                alert("Registration successful! Please login.");
+                toast.success("Registration successful!", {
+                    description: "Please login with your credentials.",
+                });
                 router.push("/login");
             } else {
                 const data = await res.json();
-                alert(data.error || "Registration failed");
+                toast.error(data.error || "Registration failed");
             }
         } catch (error) {
-            alert("An error occurred during registration");
+            toast.error("An error occurred during registration");
         } finally {
             setLoading(false);
         }

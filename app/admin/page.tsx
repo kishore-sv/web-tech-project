@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Loader2, ExternalLink } from "lucide-react";
 
+import { toast } from "sonner";
+
 export default function AdminDashboard() {
     const [pendingResources, setPendingResources] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -40,10 +42,10 @@ export default function AdminDashboard() {
 
             if (res.ok) {
                 setPendingResources((prev) => prev.filter((r: any) => r.id !== id));
-                alert("Resource approved successfully!");
+                toast.success("Resource approved successfully!");
             }
         } catch (error) {
-            alert("Failed to approve resource");
+            toast.error("Failed to approve resource");
         } finally {
             setProcessingId(null);
         }

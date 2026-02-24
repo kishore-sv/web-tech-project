@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
+import { toast } from "sonner";
+
 export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -29,13 +31,14 @@ export default function LoginPage() {
             });
 
             if (result?.error) {
-                alert("Invalid credentials");
+                toast.error("Invalid credentials");
             } else {
+                toast.success("Logged in successfully");
                 router.push("/dashboard");
                 router.refresh();
             }
         } catch (error) {
-            alert("An error occurred during sign in");
+            toast.error("An error occurred during sign in");
         } finally {
             setLoading(false);
         }
